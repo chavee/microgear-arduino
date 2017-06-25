@@ -74,7 +74,8 @@ boolean MQTTClient::connect(const char *clientId, const char *username,
     this->options.password.cstring = (char *)password;
   }
 
-  return this->client->connect(this->options) == MQTT::SUCCESS;
+  return this->client->connect(this->options);
+  //return this->client->connect(this->options) == MQTT::SUCCESS;
 }
 
 boolean MQTTClient::publish(String topic) {
