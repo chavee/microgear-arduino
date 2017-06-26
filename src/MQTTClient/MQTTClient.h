@@ -22,8 +22,10 @@ typedef struct {
   boolean retained;
 } MQTTMessage;
 
-void messageReceived(String topic, String payload, char *bytes,
-                     unsigned int length);
+//void messageReceived(String topic, String payload, char *bytes,
+//                     unsigned int length);
+
+void messageReceived(char* topic, uint8_t* payload, unsigned int length);
 
 class MQTTClient {
 private:

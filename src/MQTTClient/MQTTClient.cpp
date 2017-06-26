@@ -10,15 +10,17 @@ void MQTTClient_messageHandler(MQTT::MessageData &messageData) {
   topic[len] = '\0';
 
   // get payload
-  char *payload = (char *)message.payload;
+  uint8_t *payload = (uint8_t *)message.payload;
 
   // null terminate payload if enough space is available
   if (message.payloadlen < MQTT_BUFFER_SIZE) {
     payload[message.payloadlen] = '\0';
   }
 
-  messageReceived(String(topic), String(payload), (char *)message.payload,
-                  (unsigned int)message.payloadlen);
+  //messageReceived(String(topic), String(payload), (char *)message.payload,
+  //                (unsigned int)message.payloadlen);
+
+  messageReceived(topic, payload, (unsigned int)message.payloadlen);
 }
 
 MQTTClient::MQTTClient() {}
