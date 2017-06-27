@@ -8,6 +8,8 @@
 #include "func.h"
 #include "TokenStore.h"
 #include "config.h"
+#include "MgTime.h"
+#include "AuthClient.h"
 
 #define APPIDSIZE                  32
 #define KEYSIZE                    16
@@ -44,7 +46,7 @@ class Microgear {
   private:
     MQTTClient mqttclient;
     Client *client;
-    Token tokenstore;
+//    Token tokenstore;
 
   public:
     char *appid;

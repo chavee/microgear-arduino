@@ -63,23 +63,43 @@ void Microgear::init(char *key, char *secret, char *alias) {
 }
 
 int Microgear::connect(char* appid) {
-  char *p;
-  char mqtt_username[MQTT_USERNAME_SIZE+1];
-  char raw_password[20];
-  char mqtt_password[MQTT_PASSWORD_SIZE+1];
-  char hashkey[SECRETSIZE+TOKENSECRETSIZE+2];
+    Token tokenstore;
+    char *p;
+    char mqtt_username[MQTT_USERNAME_SIZE+1];
+    char raw_password[20];
+    char mqtt_password[MQTT_PASSWORD_SIZE+1];
+    char hashkey[SECRETSIZE+TOKENSECRETSIZE+2];
 
-  this->appid = appid;
-  topicprefixlen = strlen(appid)+1;
-  this->mqttclient.begin(this->host, this->port,*(this->client));
+    AuthClient *auth = new AuthClient(*(this->client));
+
+    this->appid = appid;
+    topicprefixlen = strlen(appid)+1;
+
+    if (this->token  == NULL) {
+        if (!auth->getAccessToken(&tokenstore, this->appid, this->key, this->secret, this->alias)) {
+            return -1;
+        }
+  }
+  else {
+      // if token has been manually assigned by api
+      strcpy(tokenstore.token, this->token);
+      strcpy(tokenstore.secret, this->tokensecret);
+      strcpy(tokenstore.saddr, this->host);
+      tokenstore.sport = this->port;
+  }
+
+  setTime(auth->getServerTime());
+
+  this->mqttclient.begin(tokenstore.saddr, tokenstore.sport,*(this->client));
 
   if (this->token) strcpy(tokenstore.token, this->token);
   if (this->tokensecret) strcpy(tokenstore.secret, this->tokensecret);
 
   strrep(mqtt_username, tokenstore.token);
   p = addattr(mqtt_username+strlen(tokenstore.token), "%", this->key);
-//  addattr(p, "%", getTimeStr());
-  addattr(p, "%", "1498324944");
+  addattr(p, "%", getTimeStr());
+
+//  addattr(p, "%", "1498324944");
   strrep(hashkey, tokenstore.secret);
   addattr(hashkey+strlen(tokenstore.secret), "&", this->secret);
 
@@ -96,6 +116,8 @@ int Microgear::connect(char* appid) {
   #endif
 
   int ret = this->mqttclient.connect(tokenstore.token, mqtt_username+strlen(tokenstore.token)+1, mqtt_password);
+
+  delete auth;
   return ret == MQTT::SUCCESS;
 }
 
