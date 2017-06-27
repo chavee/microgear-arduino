@@ -2,7 +2,7 @@
 #define MICROGEAR_H
 
 #include <arduino.h>
-#include <ESP8266WiFi.h>
+#include <Client.h>
 #include "MQTTClient/MQTTClient.h"
 #include "SHA1.h"
 #include "func.h"

@@ -3,7 +3,7 @@
 
 #include <arduino.h>
 #include <limits.h>
-#include <ESP8266WiFi.h>
+#include <Client.h>
 #include "TokenStore.h"
 #include "MgTime.h"
 #include "SHA1.h"
