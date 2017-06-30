@@ -14,16 +14,14 @@ void saveToken(Token *token) {
 }
 
 bool loadToken(Token *token) {
-    Token* dummyToken;
-    memset(token, 0, sizeof(dummyToken));
-    spi_flash_read(ESP_FLASH_SEC * SPI_FLASH_SEC_SIZE, (uint32_t *)dummyToken, sizeof(Token));
-
-    if(compareChecksum(dummyToken)){
-      memset(token, 0, sizeof(dummyToken));
-      spi_flash_read(ESP_FLASH_SEC * SPI_FLASH_SEC_SIZE, (uint32_t *)token, sizeof(Token));
+    spi_flash_read(ESP_FLASH_SEC * SPI_FLASH_SEC_SIZE, (uint32_t *)token, sizeof(Token));
+    if(compareChecksum(token)){
       return true;
     }
-    else false;
+    else {
+        memset(token, 0, sizeof(Token));
+        false;
+    }
 }
 
 void clearToken(Token *token) {
