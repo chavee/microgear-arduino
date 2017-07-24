@@ -1,4 +1,4 @@
 # microgear-arduino
 
-For more detail of SPIFlash libraries : 
+For more details of SPIFlash libraries : 
 https://github.com/Marzogh/SPIFlash
