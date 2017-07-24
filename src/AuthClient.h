@@ -1,7 +1,7 @@
 #ifndef AUTHCLIENT_H
 #define AUTHCLIENT_H
 
-#include <arduino.h>
+#include <Arduino.h>
 #include <limits.h>
 #include <Client.h>
 #include "TokenStore.h"

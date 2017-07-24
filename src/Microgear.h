@@ -1,7 +1,8 @@
 #ifndef MICROGEAR_H
 #define MICROGEAR_H
 
-#include <arduino.h>
+#include <Arduino.h>
+#include <stdint.h>
 #include <Client.h>
 #include "MQTTClient/MQTTClient.h"
 #include "SHA1.h"
@@ -10,6 +11,7 @@
 #include "config.h"
 #include "MgTime.h"
 #include "AuthClient.h"
+#include "SPIFlash/SPIFlash.h"
 
 #define APPIDSIZE                  32
 #define KEYSIZE                    16
@@ -57,7 +59,7 @@ class Microgear {
     char *token;
     char *tokensecret;
     char *host;
-    uint16 port;
+    uint16_t port;
 
     CALLBACK cb_connected;
     CALLBACK cb_absent;
@@ -95,6 +97,7 @@ class Microgear {
 		bool chat(char*, String);
 
     void on(unsigned char event, CALLBACK);
+    void setAlias(char*);
 
 };
 

@@ -1,13 +1,15 @@
 #ifndef TOKENSTORE_H
 #define TOKENSTORE_H
-#include "stdint.h"
-#include "Arduino.h"
+#include <stdint.h>
+#include <Arduino.h>
+#include "SPIFlash/SPIFlash.h"
 
 #define KEYSIZE                  16
 #define TOKENSIZE                16
 #define TOKENSECRETSIZE          32
 #define ENDPOINTSIZE             200
 #define REVOKECODESIZE           28
+
 
 struct token_struct{
   char type;
@@ -31,4 +33,3 @@ bool loadToken(Token*);
 void clearToken(Token*);
 
 #endif
-

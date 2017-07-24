@@ -29,7 +29,7 @@ int AuthClient::getAccessToken(Token *token, char* appid, char* key, char* secre
     time = getServerTime();
     setTime(time);
     #ifdef DEBUG
-        Serial.printf("Server Time == %d\n", time);
+        //Serial.printf("Server Time == %d\n", time);
     #endif
     loadToken(token);
     switch (token->type) {
@@ -169,9 +169,11 @@ int AuthClient::getHTTPResponse(Client* client, char *buff, int timeout) {
                     p++;
                     if (*p == '\n')  {          // if \r\n found
                         *(p-1) = *p = 0;
+                        /*
                         #ifdef DEBUG
                             if (*h != 0) Serial.printf("Header: %s\n",h);
                         #endif
+                        */
                         if (httpstatus==-1) {
                             httpstatus = headerParseLong("HTTP/1.1 ",3, h);
                         }
@@ -285,8 +287,8 @@ int AuthClient::getOAuthToken(Token *token, char* appid, char* key, char* secret
         strcat(hashkey,token->secret);
 
         #ifdef DEBUG
-            Serial.printf("Hash key:\n%s\n",hashkey);
-            Serial.printf("Signature base string:\n%s\n",buff);
+            //Serial.printf("Hash key:\n%s\n",hashkey);
+            //Serial.printf("Signature base string:\n%s\n",buff);
         #endif
 
         memset(signature, 0, HMACBASE64SIZE+1);
@@ -322,7 +324,7 @@ int AuthClient::getOAuthToken(Token *token, char* appid, char* key, char* secret
         }
 
         #ifdef DEBUG
-            Serial.printf("oauth_signature = %s\n",buff+18);
+            //Serial.printf("oauth_signature = %s\n",buff+18);
         #endif
 
         this->client->write((uint8_t *)buff, strlen(buff));
@@ -354,12 +356,12 @@ int AuthClient::getOAuthToken(Token *token, char* appid, char* key, char* secret
 
     httpstatus = getHTTPResponse(this->client, buff, HTTP_TIMEOUT);
 
-    #ifdef DEBUG
+/*    #ifdef DEBUG
         Serial.printf("\n");
         Serial.printf("Attribute: http status = %d\n",httpstatus);
         Serial.printf("Body: %s\n",buff);
     #endif
-
+*/
     t = h = p = buff;
     while (*h != 0) {
         if (*p != '&' && *p) p++;
@@ -390,6 +392,7 @@ int AuthClient::getOAuthToken(Token *token, char* appid, char* key, char* secret
     }
     token->flag = flag?*flag:0;
 
+/*
     #ifdef DEBUG
         Serial.printf("oauth_token == %s\n",token->token);
         Serial.printf("oauth_token_secret == %s\n",token->secret);
@@ -397,7 +400,7 @@ int AuthClient::getOAuthToken(Token *token, char* appid, char* key, char* secret
         Serial.printf("saddr = %s\n",saddr);
         Serial.printf("sport = %s\n",sport);
     #endif
-
+*/
     bufferFree(&buff);
     this->client->stop();
     return 1;

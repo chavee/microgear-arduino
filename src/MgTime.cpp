@@ -1,4 +1,4 @@
-#include <arduino.h>
+#include <Arduino.h>
 #include "MgTime.h"
 
 #define TIME_STR_LENGTH 10

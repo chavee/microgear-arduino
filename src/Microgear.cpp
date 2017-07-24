@@ -232,6 +232,14 @@ bool Microgear::publish(char* topic, String message, bool retained) {
     return publish(topic, pbuffer, retained);
 }
 
+void MicroGear::setAlias(char* gearalias) {
+    char top[MAXTOPICSIZE];
+    strcpy(top,"/@setalias/");
+    strcat(top,gearalias);
+    this->alias = alias;
+    publish(top,"");
+}
+
 bool Microgear::chat(char* target, char* message) {
     bool result;
     char chattopic[MAXALIASSIZE+11];
