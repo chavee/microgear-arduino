@@ -4,7 +4,6 @@
 uint32_t MEGA_ADDR = 0;
 #ifdef ARDUINO_ESP8266_NODEMCU
   uint32_t ESP_FLASH_SEC = ((_SPIFFS_end - 0x40200000) / SPI_FLASH_SEC_SIZE) + 1;
-  uint32_t ESP_TEST_FLASH_SEC = (0x000000 / SPI_FLASH_SEC_SIZE) + 1;
 #endif
 
 void saveFunc(Token *token){
