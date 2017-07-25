@@ -1,8 +1,16 @@
 #ifndef TOKENSTORE_H
 #define TOKENSTORE_H
 #include <stdint.h>
+#include <EEPROM.h>
 #include <Arduino.h>
-#include "SPIFlash/SPIFlash.h"
+#include "EEPROMAnything.h"
+#ifdef ARDUINO_ESP8266_NODEMCU
+  extern "C" {
+    #include "spi_flash.h"
+  }
+  extern "C" uint32_t _SPIFFS_end;
+#endif
+
 
 #define KEYSIZE                  16
 #define TOKENSIZE                16
@@ -31,5 +39,8 @@ void saveChecksum(Token*);
 void saveToken(Token*);
 bool loadToken(Token*);
 void clearToken(Token*);
+void eraseFunc();
+void saveFunc(Token*);
+void readFunc(Token*);
 
 #endif

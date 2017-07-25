@@ -1,21 +1,48 @@
 #include "TokenStore.h"
 #define DEBUG
-//IN spi_flash.h define SPI_FLASH_SEC_SIZE = 4096
-#define SPI_FLASH_SEC_SIZE 4096
-extern "C" uint32_t _SPIFFS_end;
-SPIFlash flash;
-//IN spi_flash.h define _SPIFFS_end = 0x405FB000
-uint32_t ESP_FLASH_SEC = ((0x405FB000 - 0x40200000) / SPI_FLASH_SEC_SIZE) + 1;
 
+uint32_t MEGA_ADDR = 0;
+#ifdef ARDUINO_ESP8266_NODEMCU
+  uint32_t ESP_FLASH_SEC = ((_SPIFFS_end - 0x40200000) / SPI_FLASH_SEC_SIZE) + 1;
+  uint32_t ESP_TEST_FLASH_SEC = (0x000000 / SPI_FLASH_SEC_SIZE) + 1;
+#endif
 
+void saveFunc(Token *token){
+  #ifdef ARDUINO_ESP8266_NODEMCU
+    spi_flash_write(ESP_FLASH_SEC * SPI_FLASH_SEC_SIZE, (uint32_t *)token, sizeof(Token));
+    Serial.println("SAVING : This is ESP8266");
+  #endif
+
+  #ifdef __AVR_ATmega2560__
+    //Serial.println(EEPROM.put(MEGA_ADDR, *token));
+    Serial.print("EEPORM USAGE SIZE : ");
+    Serial.println(EEPROM_writeAnything(MEGA_ADDR, *token));
+    Serial.println("SAVING : This is Mega2560");
+  #endif
+}
+void eraseFunc(){
+  #ifdef ARDUINO_ESP8266_NODEMCU
+    spi_flash_erase_sector(ESP_FLASH_SEC);
+    Serial.println("ERASING : This is ESP8266");
+  #endif
+
+  #ifdef __AVR_ATmega2560__
+    for (int i = 0 ; i < EEPROM.length() ; i++) {
+        EEPROM.write(i, 0);
+    }
+    Serial.println("ERASING : This is Mega2560");
+  #endif
+}
+
+void readFunc(Token *token){
+  EEPROM_readAnything(MEGA_ADDR, *token);
+}
 
 void saveToken(Token *token) {
-    //spi_flash_erase_sector(ESP_FLASH_SEC);
-    //spi_flash_write(ESP_FLASH_SEC * SPI_FLASH_SEC_SIZE, (uint32_t *)token, sizeof(Token));
-    flash.eraseSector(ESP_FLASH_SEC);
-    flash.writeAnything(ESP_FLASH_SEC * SPI_FLASH_SEC_SIZE, (uint32_t *)token, true);
+    eraseFunc();
+    saveChecksum(token);
     #ifdef DEBUG
-      Serial.println("saveToken Function");
+      Serial.println("========================saveToken Function=======================");
       Serial.println(token->type);
       Serial.println(token->key);
       Serial.println(token->token);
@@ -26,14 +53,13 @@ void saveToken(Token *token) {
       Serial.println(token->revokecode);
       Serial.println(token->checksum);
     #endif
-    saveChecksum(token);
+    saveFunc(token);
 }
 
 bool loadToken(Token *token) {
-    //spi_flash_read(ESP_FLASH_SEC * SPI_FLASH_SEC_SIZE, (uint32_t *)token, sizeof(Token));
-    flash.readAnything(ESP_FLASH_SEC * SPI_FLASH_SEC_SIZE, token, true);
+    readFunc(token);
     #ifdef DEBUG
-      Serial.println("loadToken Function");
+      Serial.println("========================loadToken Function========================");
       Serial.println(token->type);
       Serial.println(token->key);
       Serial.println(token->token);
@@ -57,7 +83,7 @@ bool loadToken(Token *token) {
 
 void clearToken(Token *token) {
     memset(token, 0, sizeof(Token));
-    flash.eraseSector(ESP_FLASH_SEC);
+    eraseFunc();
 }
 
 uint32_t generateChecksum(uint8_t *token, uint16_t data_len) {
